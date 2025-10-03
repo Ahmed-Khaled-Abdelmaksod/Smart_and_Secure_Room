@@ -1,4 +1,16 @@
 import cv2
+import paho.mqtt.client as mqtt
+import requests
+
+BROKER = '65e275a531cf4f5eb698af1ff09c51a7.s1.eu.hivemq.cloud'
+PORT = 8883
+USER = 'hivemq.webclient.1758974031560'
+PASSWORD = 'n8!0I9&aNUF>Yw4zs<vM'
+
+client = mqtt.Client()
+client.username_pw_set(USER,PASSWORD)
+client.tls_set()
+
 
 def capture_image():
     cap = cv2.VideoCapture(0)
@@ -11,5 +23,22 @@ def capture_image():
             cv2.waitKey(0)  # Wait until key press
             cv2.destroyAllWindows()
 
-if __name__ == "__main__":
+def on_message(client, userdata, msg):
+    print("message:",userdata)
     capture_image()
+
+def on_connect(client, userdata, flags, rc, properties=None):
+    print("connected :)")
+
+
+client.on_connect = on_connect
+client.on_message = on_message
+client.connect(BROKER,PORT)
+camera_topic = 'room/camera/capture'
+
+client.subscribe(camera_topic)
+
+
+
+
+client.loop_forever()
