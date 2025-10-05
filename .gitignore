@@ -2,3 +2,5 @@
 unauthorized_captures
 face_database.pkl
 res10_300x300_ssd_iter_140000.caffemodel
+deploy.prototxt
+__pycache__
