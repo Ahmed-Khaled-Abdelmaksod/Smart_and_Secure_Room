@@ -12,6 +12,8 @@ FLASK_SERVER_VERIFY_URL = 'http://localhost:7000/verify'
 FLASK_SERVER_REGISTER_URL = 'http://localhost:7000/register'
 camera_register_topic = 'room/camera/register'
 camera_verify_topic = 'room/camera/verify'
+room_door_topic = "room/door/open"
+unauth_signal_topic = 'room/gate/unauth'
 REGISTER_CMD = 0
 VERIFY_CMD = 1
 client = mqtt.Client()
@@ -42,6 +44,14 @@ def send_to_server(frame,cmd,name=None):
         print("Res:",resp.status_code," : ",resp.text)
     elif cmd == VERIFY_CMD:
         resp = requests.post(FLASK_SERVER_VERIFY_URL, files=files, timeout=15)
+        resp_json = resp.json()
+        if resp_json.get('authorized') == 'True':
+            client.publish(room_door_topic, payload="Authorized")
+        elif resp_json.get('authorized') == 'False':
+            client.publish(unauth_signal_topic, payload=json.dumps({"unauth": True}))
+            
+        # if resp['authorized']:
+        #     client.publish(room_door_topic,payload=str("Authorized"))
         print("Res:",resp.status_code," : ",resp.text)
 
 
