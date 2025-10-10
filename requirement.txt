@@ -1,0 +1,10 @@
+Flask
+opencv-python
+face-recognition
+numpy
+pandas
+pyserial
+paho-mqtt
+requests
+imutils
+Pillow
